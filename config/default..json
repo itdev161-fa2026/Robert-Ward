@@ -1,4 +1,4 @@
 {
-  "mongoURL": "mongodb+srv://wardr19_db_user:AMORward0903@itdev161.jyr6a6v.mongodb.net/?retryWrites=true&w=majority&appName=itdev161" 
+  "mongoURI": "mongodb+srv://wardr19_db_user: AMORward0903@itdev161.jyr6a6v.mongodb.net/?retryWrites=true&w=majority&appName=itdev161" 
 }
   
