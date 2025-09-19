@@ -1,0 +1,15 @@
+{
+    "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
+    "workbench.colorCustomizations": {
+        "[Bearded Theme Black & Ruby Soft]": {}
+    },
+    "workbench.preferredDarkColorTheme": "Bearded Theme Monokai Black",
+    "workbench.preferredHighContrastLightColorTheme": "Bearded Theme Monokai Black",
+    "workbench.preferredHighContrastColorTheme": "Bearded Theme OLED (Experimental)",
+    "editor.language.colorizedBracketPairs": [
+
+    ],
+    "workbench.iconTheme": "a-file-icon-vscode",
+    "powermode.explosions.enabled": false,
+    "powermode.combo.location": "off"
+}

@@ -5,7 +5,7 @@ import config from 'config';
 const db = config.get('mongoURI');
 
 //function to connect to MongoDB
-const connectDataBase = async () => {
+const connectDatabase = async () => {
     try { 
         await mongoose.connect(db);
         console.log('MongoDB connected...');
@@ -17,4 +17,4 @@ const connectDataBase = async () => {
     } 
 };
 
-export default connectDataBase;   
+export default connectDatabase;   
