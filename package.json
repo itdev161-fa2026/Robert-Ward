@@ -2,7 +2,7 @@
   "name": "robert-ward",
   "type": "module",
   "version": "1.0.0",
-  "description": "Fa26 Web Programming 1",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -24,6 +24,7 @@
     "config": "^4.1.1",
     "express": "^5.1.0",
     "express-validator": "^7.2.1",
+    "mongodb": "^6.20.0",
     "mongoose": "^8.18.1"
   },
   "devDependencies": {
