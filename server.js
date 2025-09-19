@@ -36,6 +36,7 @@ app.post ( '/api/users',  [
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }else{
+        //later we need to save user to database here
         return res.send(req.body);
     }
     
