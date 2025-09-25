@@ -1,2 +1,7 @@
 node_modules/
 config/default.json
+.DS_Store
+.env
+
+#Ignore vscode AI rules
+.github\instructions\codacy.instructions.md
