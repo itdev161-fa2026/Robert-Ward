@@ -12,6 +12,24 @@
     color: #282c34;
     margin: 0;
 }
+.auth-message {
+    color: #666;
+    font-size: 1rem;
+    margin: 0;
+    
+}
+
+.auth-message a {
+    color: #61dafb;
+    text-decoration: none;
+    font-weight: 600;
+    
+}
+
+.auth-message a:hover {
+    text-decoration: underline;
+    
+}
 
 .loading,
 .error {
