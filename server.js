@@ -238,8 +238,10 @@ app.put(
     check("body", "Body is required").not().isEmpty(),
   ],
   async (req, res) => {
+    console.log("PUT /api/posts/:id body =", req.body)
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+        console.log("PUT validation errors =", errors.array());
       return res.status(400).json({ errors: errors.array() });
     }
 
@@ -286,22 +288,18 @@ app.delete("/api/posts/:id", auth, async (req, res) => {
       return res.status(404).json({ msg: "Post not found" });
     }
 
-    // Check if user owns the post
     if (post.user.toString() !== req.user.id) {
       return res.status(401).json({ msg: "User not authorized" });
     }
 
-    await Post.findByIdAndDelete(req.params.id);
-
+    await post.deleteOne();
     res.json({ msg: "Post removed" });
   } catch (error) {
     console.error(error.message);
-    if (error.kind === "ObjectId") {
-      return res.status(404).json({ msg: "Post not found" });
-    }
     res.status(500).send("Server error");
   }
 });
+
 
 
 // Connection listener

@@ -1,11 +1,12 @@
 import {useState} from 'react';
 import './Login.css';
+import toast from 'react-hot-toast';
 
 
 const Login = ({ onLogin, error: authError }) => {
     const [formData, setFormData] = useState({ 
-        username: ' ',
-        password: ' ' 
+        username: '',
+        password: '' 
     });
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
@@ -20,32 +21,44 @@ const Login = ({ onLogin, error: authError }) => {
         }
     };
 
-    const validateForm = () => {
-        const newErrors = {};
-        if(!email.trim()){
-            newErrors.email = 'Email is required';
-        }else if(!/\S+@\S+\.\S+/.test(email)){
-            newErrors.email = 'Email is invalid';
-        }
-        if(!password){
-            newErrors.password = 'Password is required';
-        }
+   const validateForm = () => {
+  const newErrors = {};
 
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
+  if (!email.trim()) {
+    newErrors.email = "Email is required";
+  } else if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) {
+    newErrors.email = "Email is invalid";
+  }
+
+  if (!password) {
+    newErrors.password = "Password is required";
+  }
+
+  setErrors(newErrors);
+  return { isValid: Object.keys(newErrors).length === 0, newErrors };
+};
+
 
     const onSubmit = async (e) => {
-        e.preventDefault();
+  e.preventDefault();
 
-        if(!validateForm()) {
-            return;
-        }
-        
-        setLoading(true);
-        await onLogin(email, password);
-        setLoading(false);
-    };
+  const { isValid, newErrors } = validateForm();
+  if (!isValid) {
+    toast.error(newErrors.email || newErrors.password || "Fix the form errors.");
+    return;
+  }
+
+  try {
+    setLoading(true);
+    await onLogin(email, password);
+    toast.success("Logged in!");
+  } catch (err) {
+    toast.error("Invalid email or password.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
     return (
     <div className="login-form">
@@ -54,7 +67,7 @@ const Login = ({ onLogin, error: authError }) => {
 
       {authError && <div className="error-message">{authError}</div>}
 
-      <form onSubmit={onSubmit}>
+      <form onSubmit={onSubmit} noValidate>
         <div className="form-group">
           <label htmlFor="email">Email</label>
           <input

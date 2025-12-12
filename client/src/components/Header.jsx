@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/authContext';
 import './Header.css';
+import toast from 'react-hot-toast';
 
 
 const Header = () => {
@@ -9,6 +10,7 @@ const Header = () => {
 
   const handleLogout = () => {
     logout();
+    toast.success("Logged out successfully!");
   }
 
   return (
