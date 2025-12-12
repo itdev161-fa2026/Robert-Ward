@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './Register.css';
+import toast from 'react-hot-toast';
 
 const Register = ({ onRegister, error: authError }) => {
   const [formData, setFormData] = useState({
@@ -20,40 +21,61 @@ const Register = ({ onRegister, error: authError }) => {
     }
   };
 
-  const validateForm = () => {
-    const newErrors = {};
+const validateForm = () => {
+  const newErrors = {};
 
-    if (!name.trim()) {
-      newErrors.name = 'Name is required';
-    }
+  if (!email.trim()) {
+    newErrors.email = "Email is required";
+  } else if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) {
+    newErrors.email = "Email is invalid";
+  }
 
-    if (!email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Email is invalid';
-    }
+  if (!password) {
+    newErrors.password = "Password is required";
+  } else if (password.length < 6) {
+    newErrors.password = "Password must be at least 6 characters";
+  }
 
-    if (!password) {
-      newErrors.password = 'Password is required';
-    } else if (password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
-    }
+  setErrors(newErrors);
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  //  return both validity + the errors that were built
+  return { isValid: Object.keys(newErrors).length === 0, newErrors };
+};
+
 
   const onSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!validateForm()) {
-      return;
-    }
+ const isValid = validateForm();
+if (!isValid) {
+  toast.error("Fix the highlighted fields.");
+  return;
+}
 
-    setLoading(true);
-    await onRegister(name, email, password);
-    setLoading(false);
-  };
+  try {
+  setLoading(true);
+
+  const result = await onRegister(name, email, password);
+
+  // this prevents success toast from firing.
+  if (result && result.success === false) {
+    toast.error(result.message || "Registration failed.");
+    return;
+  }
+
+  toast.success("Account created successfully!");
+} catch (err) {
+  const msg =
+    err?.response?.data?.errors?.[0]?.msg ||
+    err?.response?.data?.msg ||
+    "Registration failed. Please try again.";
+
+  toast.error(msg);
+} finally {
+  setLoading(false);
+}
+};
+
 
   return (
     <div className="register-form">
@@ -62,7 +84,7 @@ const Register = ({ onRegister, error: authError }) => {
 
       {authError && <div className="error-message">{authError}</div>}
 
-      <form onSubmit={onSubmit}>
+      <form onSubmit={onSubmit} noValidate>
         <div className="form-group">
           <label htmlFor="name">Name</label>
           <input

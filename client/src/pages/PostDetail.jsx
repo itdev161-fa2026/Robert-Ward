@@ -1,14 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getPostById } from '../services/api';
+import { getPostById, deletePost } from '../services/api';
+import  { AuthContext } from '../context/authContext';
 import './PostDetail.css';
+import toast from 'react-hot-toast';
+import { format, formatDistanceToNow } from 'date-fns';
 
 const PostDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const {user} = useContext(AuthContext);
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -29,9 +34,46 @@ const PostDetail = () => {
   }, [id]);
 
   const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+    return format(new Date(dateString), "PPP p");
   };
+
+  const formatRelativeTime = (dateString) => {
+    return formatDistanceToNow(new Date(dateString), {addSuffix: true});
+  };
+
+  const handleEdit = () => {
+    navigate(`/posts/${id}/edit`);
+  };
+
+const handleDelete = () => {
+  console.log("handleDelete clicked, id =", id);
+  setShowConfirm(true);
+};
+
+const confirmDelete = async () => {
+  try {
+    console.log("Deleting post with id:", id);
+    await deletePost(id);
+    setShowConfirm(false);
+
+    toast.success('Post deleted');
+    navigate('/');
+  } catch (err) {
+    console.error("Failed to delete post", err);
+    setShowConfirm(false);
+
+    toast.error("Failed to delete post.");
+  }
+};
+
+const cancelDelete = () => {
+  setShowConfirm(false);
+};
+
+
+   // Check if current user owns the post
+  const canModify = user && post && user.id === post.user._id;
+
 
   if (loading) {
     return <div className="container loading">Loading post...</div>;
@@ -61,16 +103,42 @@ const PostDetail = () => {
         <h1>{post.title}</h1>
         <div className="post-detail-meta">
           <span className="post-detail-author">By {post.user?.name || 'Unknown'}</span>
-          <span className="post-detail-date">{formatDate(post.createDate)}</span>
+          <span className="post-detail-date">{formatDate(post.createDate)} • {formatRelativeTime(post.createDate)}</span>
         </div>
         <div className="post-detail-body">
           {post.body.split('\n').map((paragraph, index) => (
             <p key={index}>{paragraph}</p>
           ))}
         </div>
-        {/* Edit and Delete buttons will be added in Activity 9 */}
-      </article>
+      {canModify && (
+          <div className="post-actions">
+             <button onClick={handleEdit} className="edit-button">
+               Edit Post
+             </button>
+             <button onClick={handleDelete} className="delete-button">
+               Delete Post
+             </button>
+           </div>
+)}
+{showConfirm && (
+  <div className="confirm-overlay">
+    <div className="confirm-box">
+      <p>Are you sure you want to delete this post?</p>
+      <div className="confirm-actions">
+        <button onClick={confirmDelete} className="confirm-delete">
+          Yes, delete
+        </button>
+        <button onClick={cancelDelete} className="confirm-cancel">
+          Cancel
+        </button>
+      </div>
     </div>
+  </div>
+)}
+
+        </article>
+      </div>
+
   );
 };
 
